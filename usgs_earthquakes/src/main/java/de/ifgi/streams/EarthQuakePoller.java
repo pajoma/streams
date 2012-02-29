@@ -1,9 +1,13 @@
 package de.ifgi.streams;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFHandlerException;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -18,11 +22,14 @@ public class EarthQuakePoller extends Thread{
 	
 	@Override
 	public void run() {
+		
+		 
 		while(true) {
 			// we check every 60 minutes
 			try {
+				MessageBuilder mb = new MessageBuilder();
 				
-				this.poll(); 
+				this.poll(mb); 
 				
 				Thread.sleep(6000000);
 				
@@ -41,19 +48,24 @@ public class EarthQuakePoller extends Thread{
 				} catch (InterruptedException e1) {
 					break; 
 				}
+			} catch (RepositoryException e) {
+				break; 
+			} catch (RDFHandlerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			} 
 		}
 	}
 
-	private void poll() throws IllegalArgumentException, MalformedURLException, FeedException, IOException {
+	private void poll(MessageBuilder mb) throws IllegalArgumentException, MalformedURLException, FeedException, IOException, RepositoryException, RDFHandlerException {
 		 SyndFeedInput input = new SyndFeedInput();
 		 SyndFeed feed = input.build(new XmlReader(new URL(FEEDURL))); 
 		List<SyndEntry> entries = (List<SyndEntry>) feed.getEntries(); 
 			for (SyndEntry entry : entries) {
 				// build message
-				StringBuilder sb = new StringBuilder(); 
-				new MessageBuilder().constructMessage(sb, entry); 
-				this.pusher.push(sb.toString()); 
+				StringWriter sw = new StringWriter(); 
+				mb.constructMessage(sw, entry); 
+				this.pusher.push(sw.toString()); 
 				
 			}
 	}

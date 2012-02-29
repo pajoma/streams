@@ -4,16 +4,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jivesoftware.smack.ChatManager;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.SASLAuthentication;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 public class EarthQuakePusher extends Thread {
 	Logger log = Logger.getLogger("EarthQuakes Pusher"); 
@@ -23,50 +16,36 @@ public class EarthQuakePusher extends Thread {
 
 	public static String SERVER = "dunedin.uni-muenster.de";
 	public static String CONFERENCE = "earthquakes@conference.dunedin.uni-muenster.de"; 
-	
-	private MultiUserChat muc = null; 
-
-	private XMPPConnection connection;
+	public static String QUEUE = "events";
+	private Channel channel; 
 
 
 	@Override
 	public void run() {
-	
+		boolean run = true; 
+		try {
+			channel = this.initConnection();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1); 
+		} 
 		
-		while(true) {
+		while(run) {
 			// we just keep our selves running
 			
 			try {
-				
-			
+
 				Thread.sleep(300);
 			
 			} catch (InterruptedException e) {
 				log.log(Level.SEVERE, "Thread", e); 
+				run = false; 
 				
 			} 
 		}
 	}
 	
 	
-	private XMPPConnection getConnection() throws XMPPException {
-		if ((connection == null)||(!connection.isConnected())) {
-					
-			ConnectionConfiguration config = new ConnectionConfiguration(SERVER, 5222);
-			config.setCompressionEnabled(true);
-			config.setSASLAuthenticationEnabled(true);  
-//			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
-			
-			connection = new XMPPConnection(config);
-			// Connect to the server
-			connection.connect();
-			connection.login(USER, PASS); 
-			log.info(USER +" is successfully connected"); 
-		}
 
-		return connection;
-	
-	}
 	
 //	private XMPPConnection getConnection() throws XMPPException {
 //		if (connection == null) {
@@ -98,16 +77,28 @@ public class EarthQuakePusher extends Thread {
 //	
 //	}
 
-	public  void push(String message) throws IOException {
-		try {
-			
-			
-			getConference().sendMessage(message);
-			
-		} catch (XMPPException e) {
-			throw new IOException(e); 
-		} 
+	private Channel initConnection() throws IOException {
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost(SERVER);
+		Connection connection = factory.newConnection();
+		Channel channel = connection.createChannel();
+		
+		channel.queueDeclare(QUEUE, false, false, false, null);
+
+		return channel; 
+	   
+		
 	}
+
+
+
+
+	public  void push(String message) throws IOException {
+
+		channel.basicPublish("", QUEUE, null, message.getBytes());
+		System.out.println(" [x] Sent '" + message + "'");
+			
+		}
 
 //	private  MultiUserChat getConference() throws XMPPException {
 //		if (muc == null) {
@@ -124,24 +115,4 @@ public class EarthQuakePusher extends Thread {
 //		
 //	}
 
-
-	private  MultiUserChat getConference() throws XMPPException {
-		if (muc == null) {
-			muc = new MultiUserChat(getConnection(), CONFERENCE);
-			
-		}
-		if (! muc.isJoined()) {
-			muc.join(USER); 
-			log.info(USER+" joined conference"); 
-		} 
-	
-//		else {
-//			muc = null; 
-//			return getConference(); 
-//		}
-
-		return muc;
-
-		
-	}
 }
