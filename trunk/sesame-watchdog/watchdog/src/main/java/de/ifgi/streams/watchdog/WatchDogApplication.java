@@ -19,6 +19,7 @@ public class WatchDogApplication extends Application {
 	public WatchDogApplication(StreamPipe pipe) {
 		this.pipe = pipe;
 		
+		
 	}
 	
     /**
