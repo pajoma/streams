@@ -3,6 +3,7 @@ package de.ifgi.streams.message;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Deque;
+import java.util.Observable;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -15,9 +16,9 @@ import java.util.concurrent.LinkedBlockingDeque;
  *
  */
 
-public class MessageContainer<T> {
+public class MessageContainer<T> extends Observable {
 
-	private BlockingDeque<Message<T>> list = null; 
+	private BlockingDeque<Message<T>> list = null;
 	
 	public MessageContainer() {
 		list = new LinkedBlockingDeque<MessageContainer<T>.Message<T>>(100); 
@@ -46,16 +47,19 @@ public class MessageContainer<T> {
 	}
 	
 	public void pushMessage(T message) throws InterruptedException {
+		setChanged();
 		Message<T> m = new Message<T>(); 
 		m.message = message; 
 		m.stored = Calendar.getInstance().getTime(); 
 		
-		if(listMessages().offer(m)) {
-			listMessages().add(m); 
-		} else {
-			poll(); 
-			pushMessage(message); 
+		if(!listMessages().offer(m)) {
+			poll();
+			clearChanged();
+			pushMessage(message);  
+		}else{
+			notifyObservers(m.message);
 		}
+		
 	}
 	
 	

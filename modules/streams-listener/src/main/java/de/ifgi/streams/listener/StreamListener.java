@@ -27,6 +27,13 @@ public class StreamListener<T> implements Runnable  {
 		this.host = host;
 		this.init(); 
 	}
+	
+	public StreamListener(String queue, String host, MessageContainer<T> container) throws IOException {
+		this.queue = queue;
+		this.host = host;
+		this.container = container;
+		this.init(); 
+	}
 
 
 	public void init() throws IOException {
@@ -86,7 +93,7 @@ public class StreamListener<T> implements Runnable  {
 	
 	public MessageHandlerDelegate<T> getMessageHandlerDelegate() {
 		if (messageDelegator == null) {
-			messageDelegator = new MessageHandlerDelegate<T>(channel, container); 
+			messageDelegator = new MessageHandlerDelegate<T>(channel, getMessageContainer()); 
 			
 		}
 
@@ -94,7 +101,12 @@ public class StreamListener<T> implements Runnable  {
 		
 	}
 
-	
+	public MessageContainer<T> getMessageContainer() {
+		if (container == null) {
+			container = new MessageContainer<T>(); 
+		}
+		return container;
+	}
 	
 
 }
