@@ -1,0 +1,35 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://purl.org/ifgi/events#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ssn: <http://purl.org/ifgi/ssn#> .
+@prefix dul: <http://purl.org/ifgi/dul#> .
+@prefix evob: <http://purl.org/ifgi/event-observation#> .
+@prefix geospace: <http://purl.org/ifgi/geospace#> .
+@prefix geosparql: <http://purl.org/ifgi/geosparql#> .
+@prefix time: <http://purl.org/ifgi/time#> .
+@prefix flood: <http://purl.org/ifgi/water/flood#> .
+
+_:node16n53ss6mx1 a owl:Ontology ;
+	rdfs:label "RandomEventDescriptionInstance" ;
+	dc:format "http://www.wsmo.org/wsml/wsml-syntax/wsml-flight" ;
+	owl:imports <http://purl.org/ifgi/event-observation#> , <http://purl.org/ifgi/geospace#> , <http://purl.org/ifgi/ssn#> , <http://purl.org/ifgi/water/flood#> , <http://purl.org/ifgi/dul#> , <http://purl.org/ifgi/geosparql#> , <http://www.w3.org/2006/time#> .
+
+:_desc a evob:EventObservationDescription ;
+	dul:describes :_evob ;
+	evob:describedLocation :_loc .
+
+:_evob a evob:EventObservation ;
+	dc:description "Random Event automatically generated"^^xsd:string ;
+	ssn:observedProperty :_prop ;
+	ssn:observedBy :_sensor .
+
+:_event a flood:RandomEventObservation .
+
+:_prop a flood:RandomValue .
+
+:_loc a geospace:geographical_space_region , geosparql:Geometry , time:TemporalEntity ;
+	geosparql:asWKT "SRID=4326;Point({X-COORD},{Y-COORD})"^^xsd:string ;
+	time:inXSDDateTime "{DATE}"^^xsd:string .
