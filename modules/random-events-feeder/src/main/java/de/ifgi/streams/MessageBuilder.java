@@ -36,7 +36,7 @@ public class MessageBuilder {
 	public static String NS_SSN = "http://purl.org/ifgi/ssn#"; 
 	public static String NS_DUL = "http://purl.org/ifgi/dul#";
 	public static String NS_GEOSPARQL = "http://purl.org/ifgi/geosparql#"; 
-	public static String NS_TIME = "http://www.w3.org/2006/time#"; 
+	public static String NS_TIME = "http://purl.org/ifgi/time#"; 
 	
 	
 

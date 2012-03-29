@@ -15,7 +15,7 @@
 _:node16n53ss6mx1 a owl:Ontology ;
 	rdfs:label "RandomEventDescriptionInstance" ;
 	dc:format "http://www.wsmo.org/wsml/wsml-syntax/wsml-flight" ;
-	owl:imports <http://purl.org/ifgi/event-observation#> , <http://purl.org/ifgi/geospace#> , <http://purl.org/ifgi/ssn#> , <http://purl.org/ifgi/water/flood#> , <http://purl.org/ifgi/dul#> , <http://purl.org/ifgi/geosparql#> , <http://www.w3.org/2006/time#> .
+	owl:imports <http://purl.org/ifgi/event-observation#> , <http://purl.org/ifgi/geospace#> , <http://purl.org/ifgi/ssn#> , <http://purl.org/ifgi/water/flood#> , <http://purl.org/ifgi/dul#> , <http://purl.org/ifgi/geosparql#> , <http://purl.org/ifgi/time#> .
 
 :_desc a evob:EventObservationDescription ;
 	dul:describes :_evob ;
@@ -25,6 +25,8 @@ _:node16n53ss6mx1 a owl:Ontology ;
 	dc:description "Random Event automatically generated"^^xsd:string ;
 	ssn:observedProperty :_prop ;
 	ssn:observedBy :_sensor .
+	
+:_sensor a ssn:Sensor.	
 
 :_event a flood:RandomEventObservation .
 
