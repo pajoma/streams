@@ -6,6 +6,13 @@ Reasoning on Event and Observation Streams
 
 == Components ==
 
+ * EventFeeder
+ * [RandomEventsFeeder random-events-feeder]
+ * [SesameWatchdog sesame-watchdog]
+ * [StreamsListener streams-listener]
+ * [StreamsModel streams-model]
+ * [USGSEarthquakes usgs_earthquakes]
+
 == Publications ==
  * [SemanticEventProcessingInENVISION Semantic Event Processing in ENVISION]
 
