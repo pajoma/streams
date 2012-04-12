@@ -1,17 +1,17 @@
 Reasoning on Event and Observation Streams
 
-= What is Streams about? =
+== What is Streams about? ==
 
-== General Architecture ==
+=== General Architecture ===
 
-= Components =
+== Components ==
 
-= Publications =
+== Publications ==
  * [SemanticEventProcessingInENVISION Semantic Event Processing in ENVISION]
 
-= Guides =
- * How to integrate Streams via Maven?
+== Guides ==
+ * [HowToIntegrateStreamsViaMaven How to integrate Streams via Maven?]
 
-= Appliations =
+== Appliations ==
 
- * A Flood-Monitoring Scenario
+ * [AFloodMonitoringScenario A Flood-Monitoring Scenario]
