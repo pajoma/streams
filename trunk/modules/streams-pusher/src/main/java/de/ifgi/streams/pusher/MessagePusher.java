@@ -12,7 +12,7 @@ public class MessagePusher{
 	
 //	private static EventPusher instance;
 	
-	Logger log = Logger.getLogger("Event Pusher"); 
+	Logger log = Logger.getLogger(MessagePusher.class.getName()); 
 //	public static String USER = "usgs"; 
 //	public static String PASS = "KjldyOVsOoOD3YxHBm37"; 
 	
