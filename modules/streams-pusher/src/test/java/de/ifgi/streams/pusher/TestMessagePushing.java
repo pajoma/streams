@@ -18,7 +18,8 @@ import de.ifgi.streams.message.MessageHandler;
 public class TestMessagePushing {
 	
 	private static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
-	private String result = "";
+	private String result1 = "";
+	private String result2 = "";
 	
 	@Test
 	public void testPush() {
@@ -26,7 +27,9 @@ public class TestMessagePushing {
 		try {
 			listener = new StreamListener<String>(MessagePusher.defaultQUEUE, MessagePusher.defaultSERVER, new MessageContainer<String>());
 			MessageHandler<String> mhd1 = new TestMessageHandler();
-			listener.getMessageHandlerDelegate().registerMessageHandler(mhd1); 
+			listener.getMessageHandlerDelegate().registerMessageHandler(mhd1);
+			MessageHandler<String> mhd2 = new TestMessageHandler2();
+			listener.getMessageHandlerDelegate().registerMessageHandler(mhd2);
 			
 			Thread t = new Thread(listener);
 			t.start();
@@ -38,9 +41,12 @@ public class TestMessagePushing {
 			MessagePusher pusher = new MessagePusher();
 			String message = "TESTMESSAGE from "+now();
 			pusher.push(message);
+			String message2 = "HALLO from "+now();
+			pusher.push(message2);
 			Thread.sleep(2000);
 			
-			Assert.assertEquals(message, result);
+			Assert.assertEquals(message, result1);
+			Assert.assertEquals(message2, result2);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -72,6 +78,21 @@ public class TestMessagePushing {
 		
 	}
 	
+	public class TestMessageHandler2 implements MessageHandler<String>{
+
+		@Override
+		public String handleMessage(byte[] message, Map<String, Object> params) {
+			return new String(message);
+		}
+
+		@Override
+		public boolean isResponsibleForMessage(byte[] message, Map<String, Object> params) {
+			String msg = new String(message); 
+			return msg.contains("HALLO");
+		}
+		
+	}
+	
 	public class TestObserver extends Thread implements Observer {
 		
 		public void setEventListener(StreamListener<String> listener) {
@@ -81,9 +102,17 @@ public class TestMessagePushing {
 		@Override
 		public void update(Observable o, Object arg) {
 			System.out.println("update");
+			System.out.println(arg);
 			if (arg instanceof String) {
-				System.out.println(arg);
-				result = (String) arg;
+				String retrieval = (String) arg;
+				if (retrieval.contains("MESSAGE")) {
+					System.out.println(retrieval);
+					result1 = retrieval;
+				}
+				if (retrieval.contains("HALLO")) {
+					System.out.println(retrieval);
+					result2 = retrieval;
+				}
 			}
 		}
 

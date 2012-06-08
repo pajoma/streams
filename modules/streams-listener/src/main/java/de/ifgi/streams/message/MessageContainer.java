@@ -58,6 +58,7 @@ public class MessageContainer<T> extends Observable {
 			pushMessage(message);  
 		}else{
 			notifyObservers(m.message);
+			clearChanged();
 		}
 		
 	}
