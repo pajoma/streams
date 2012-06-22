@@ -5,5 +5,5 @@ of sensor data in order to react to speciﬁc situations. In the ENVISION projec
 
 == Downloads ==
 
- * _PDF_
- * _BIBTEX_
+ * [http://delivery.acm.org/10.1145/2260000/2254161/a25-llaves.pdf?ip=128.176.134.56&acc=ACTIVE%20SERVICE&CFID=112245138&CFTOKEN=46084578&__acm__=1340371839_1126a8782f01fa5ae9639a90a7a53dae _PDF_]
+ * [http://dl.acm.org/downformats.cfm?id=2254161&parent_id=2254129&expformat=bibtex&CFID=112245138&CFTOKEN=46084578 _BIBTEX_]
