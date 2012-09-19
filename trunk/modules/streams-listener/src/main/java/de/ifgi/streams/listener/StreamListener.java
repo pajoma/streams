@@ -44,11 +44,8 @@ public class StreamListener<T> implements Runnable  {
 			
 			connection = factory.newConnection();
 			channel = connection.createChannel();
-			channel.queueDeclare(queue, false, false, false, null);
-			
-			
-			
-			
+//			channel.queueDeclare(queue, false, false, false, null);
+			channel.queueDeclarePassive(queue);
 		} catch(UnknownHostException e) {
 			// operating in offline mode
 		} catch (IOException e) {
