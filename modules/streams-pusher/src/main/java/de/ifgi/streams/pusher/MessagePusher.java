@@ -26,7 +26,8 @@ public class MessagePusher{
 	public static final String defaultQUEUE = "events";
 	private String server;
 	private String queue;
-	private Channel channel; 
+	private Channel channel;
+	private Connection connection;
 	
 //	private MultiUserChat muc; 
 //	private XMPPConnection connection;	
@@ -93,16 +94,18 @@ public class MessagePusher{
 	private void initConnection() throws IOException {
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(server);
-		Connection connection = factory.newConnection();
-		channel = connection.createChannel();
-		channel.queueDeclare(queue, false, false, false, null);
+		connection = factory.newConnection();
 	}
 	
 	
 	public void push(String message) throws IOException{
 		try {
+			channel = connection.createChannel();
+			channel.queueDeclarePassive(queue);
+//			channel.queueDeclare(queue, false, false, false, null);
 			channel.basicPublish("", queue, null, message.getBytes());
 			log.log(Level.FINE, " [x] Sent '" + message + "'");
+			channel.close();
 		} catch (IOException e) {
 			log.log(Level.WARNING, " [x] NOT Sent '" + message + "'");
 			e.printStackTrace();
