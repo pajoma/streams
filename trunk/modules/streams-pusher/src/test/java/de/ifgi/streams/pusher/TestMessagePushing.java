@@ -25,7 +25,7 @@ public class TestMessagePushing {
 	public void testPush() {
 		StreamListener<String> listener;
 		try {
-			listener = new StreamListener<String>(MessagePusher.defaultQUEUE, MessagePusher.defaultSERVER, new MessageContainer<String>());
+			listener = new StreamListener<String>(MessagePusher.defaultEXCHANGE, MessagePusher.defaultSERVER, new MessageContainer<String>());
 			MessageHandler<String> mhd1 = new TestMessageHandler();
 			listener.getMessageHandlerDelegate().registerMessageHandler(mhd1);
 			MessageHandler<String> mhd2 = new TestMessageHandler2();
