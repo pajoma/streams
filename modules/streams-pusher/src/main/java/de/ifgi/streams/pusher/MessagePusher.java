@@ -23,9 +23,11 @@ public class MessagePusher{
 //	public static String CONFERENCE = "earthquakes@conference.giv-wfs.uni-muenster.de";
 	
 	public static final String defaultSERVER = "dunedin.uni-muenster.de";
-	public static final String defaultQUEUE = "events";
+//	public static final String defaultQUEUE = "events";
+	public static final String defaultEXCHANGE = "events";
 	private String server;
-	private String queue;
+//	private String queue;
+	private String exchange;
 	private Channel channel;
 	private Connection connection;
 	
@@ -36,13 +38,15 @@ public class MessagePusher{
 	
 	public MessagePusher() throws IOException{
 		server = defaultSERVER;
-		queue = defaultQUEUE;
+//		queue = defaultQUEUE;
+		exchange = defaultEXCHANGE;
 		initConnection();
 	}
 	
-	public MessagePusher(String server, String queue) throws IOException{
+	public MessagePusher(String server, String exchange) throws IOException{
 		this.server = server;
-		this.queue = queue;
+//		this.queue = queue;
+		this.exchange = exchange;
 		initConnection();
 	}
 	
@@ -95,23 +99,35 @@ public class MessagePusher{
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(server);
 		connection = factory.newConnection();
+		
+		channel = connection.createChannel();
+		channel.exchangeDeclare(exchange, "fanout");
 	}
 	
 	
 	public void push(String message) throws IOException{
 		try {
-			channel = connection.createChannel();
-			channel.queueDeclarePassive(queue);
+//			channel = connection.createChannel();
+//			channel.queueDeclarePassive(queue);
 //			channel.queueDeclare(queue, false, false, false, null);
-			channel.basicPublish("", queue, null, message.getBytes());
-			log.log(Level.FINE, " [x] Sent '" + message + "'");
-			channel.close();
+			if(channel.isOpen()) {
+				channel.basicPublish(exchange, "", null, message.getBytes());
+				log.log(Level.FINE, " [x] Sent '" + message + "'");
+				
+			}else{
+				throw channel.getCloseReason();
+			}
+			
 		} catch (IOException e) {
 			log.log(Level.WARNING, " [x] NOT Sent '" + message + "'");
 			e.printStackTrace();
 			throw e;
 		}
 		
+	}
+	
+	public void shutdown() throws IOException{
+		channel.close();
 	}
 	
 	

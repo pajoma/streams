@@ -18,18 +18,21 @@ public class StreamListener<T> implements Runnable  {
 	private Channel channel;
 	
 	private Connection connection;
-	private final String queue;
+//	private final String queue;
 	private final String host;
-
+	private final String exchange;
+	private String queueName;
 	
-	public StreamListener(String queue, String host) throws IOException {
-		this.queue = queue;
+	private MessageHandlerDelegate<T> messageDelegator = null;
+	
+	public StreamListener(String exchange, String host) throws IOException {
+		this.exchange = exchange;
 		this.host = host;
 		this.init(); 
 	}
 	
-	public StreamListener(String queue, String host, MessageContainer<T> container) throws IOException {
-		this.queue = queue;
+	public StreamListener(String exchange, String host, MessageContainer<T> container) throws IOException {
+		this.exchange = exchange;
 		this.host = host;
 		this.container = container;
 		this.init(); 
@@ -45,7 +48,12 @@ public class StreamListener<T> implements Runnable  {
 			connection = factory.newConnection();
 			channel = connection.createChannel();
 //			channel.queueDeclare(queue, false, false, false, null);
-			channel.queueDeclarePassive(queue);
+//			channel.queueDeclarePassive(queue);
+			
+			queueName = channel.queueDeclare().getQueue();
+			
+			// all message posted to our exchange will be posted to our new queue
+			channel.queueBind(queueName, exchange, "");
 		} catch(UnknownHostException e) {
 			// operating in offline mode
 		} catch (IOException e) {
@@ -56,8 +64,8 @@ public class StreamListener<T> implements Runnable  {
 	}
 	public void run() {
 		try {
-			boolean autoAck = false; 
-			channel.basicConsume(queue, autoAck, getMessageHandlerDelegate());
+			boolean autoAck = true; 
+			channel.basicConsume(queueName, autoAck, getMessageHandlerDelegate());
 			
 			while(true) {
 				// do nothing
@@ -86,7 +94,7 @@ public class StreamListener<T> implements Runnable  {
 	}
 
 
-	MessageHandlerDelegate<T> messageDelegator = null; 
+	 
 	
 	public MessageHandlerDelegate<T> getMessageHandlerDelegate() {
 		if (messageDelegator == null) {
