@@ -24,12 +24,11 @@ public class TestMessagePushing {
 	@Test
 	public void testPush() {
 		StreamListener<String> listener;
+		StreamListener<String> listener2;
 		try {
 			listener = new StreamListener<String>(MessagePusher.defaultEXCHANGE, MessagePusher.defaultSERVER, new MessageContainer<String>());
 			MessageHandler<String> mhd1 = new TestMessageHandler();
 			listener.getMessageHandlerDelegate().registerMessageHandler(mhd1);
-			MessageHandler<String> mhd2 = new TestMessageHandler2();
-			listener.getMessageHandlerDelegate().registerMessageHandler(mhd2);
 			
 			Thread t = new Thread(listener);
 			t.start();
@@ -37,6 +36,17 @@ public class TestMessagePushing {
 			TestObserver testObs = new TestObserver();
 			testObs.setEventListener(listener);
 			testObs.start();
+			
+			listener2 = new StreamListener<String>(MessagePusher.defaultEXCHANGE, MessagePusher.defaultSERVER, new MessageContainer<String>());
+			MessageHandler<String> mhd2 = new TestMessageHandler2();
+			listener2.getMessageHandlerDelegate().registerMessageHandler(mhd2);
+			
+			Thread t2 = new Thread(listener2);
+			t2.start();
+			
+			TestObserver2 testObs2 = new TestObserver2();
+			testObs2.setEventListener(listener2);
+			testObs2.start();
 			
 			MessagePusher pusher = new MessagePusher();
 			String message = "TESTMESSAGE from "+now();
@@ -101,14 +111,34 @@ public class TestMessagePushing {
 
 		@Override
 		public void update(Observable o, Object arg) {
-			System.out.println("update");
-			System.out.println(arg);
 			if (arg instanceof String) {
 				String retrieval = (String) arg;
 				if (retrieval.contains("MESSAGE")) {
 					System.out.println(retrieval);
 					result1 = retrieval;
 				}
+			}
+		}
+
+		@Override
+		public void run() {
+			while(true){
+				
+			}
+		}
+		
+	}
+	
+public class TestObserver2 extends Thread implements Observer {
+		
+		public void setEventListener(StreamListener<String> listener) {
+			listener.getMessageContainer().addObserver(this);
+		}
+
+		@Override
+		public void update(Observable o, Object arg) {
+			if (arg instanceof String) {
+				String retrieval = (String) arg;
 				if (retrieval.contains("HALLO")) {
 					System.out.println(retrieval);
 					result2 = retrieval;
