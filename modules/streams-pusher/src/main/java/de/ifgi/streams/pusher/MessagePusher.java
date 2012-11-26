@@ -128,6 +128,7 @@ public class MessagePusher{
 	
 	public void shutdown() throws IOException{
 		channel.close();
+		connection.close();
 	}
 	
 	

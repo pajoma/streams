@@ -23,6 +23,8 @@ public class StreamListener<T> implements Runnable  {
 	private final String exchange;
 	private String queueName;
 	
+	private boolean run = true;
+	
 	private MessageHandlerDelegate<T> messageDelegator = null;
 	
 	public StreamListener(String exchange, String host) throws IOException {
@@ -67,7 +69,7 @@ public class StreamListener<T> implements Runnable  {
 			boolean autoAck = true; 
 			channel.basicConsume(queueName, autoAck, getMessageHandlerDelegate());
 			
-			while(true) {
+			while(run) {
 				// do nothing
 				Thread.sleep(10); 
 				
@@ -113,5 +115,15 @@ public class StreamListener<T> implements Runnable  {
 		return container;
 	}
 	
+	public void shutdown(){
+		try {
+			run = false;
+			channel.close();
+			connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }
