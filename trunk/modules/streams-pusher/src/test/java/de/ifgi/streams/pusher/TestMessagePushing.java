@@ -57,6 +57,11 @@ public class TestMessagePushing {
 			
 			Assert.assertEquals(message, result1);
 			Assert.assertEquals(message2, result2);
+			pusher.shutdown();
+			listener.shutdown();
+			listener2.shutdown();
+			testObs = null;
+			t2 = null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail();

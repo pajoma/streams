@@ -101,7 +101,8 @@ public class MessagePusher{
 		connection = factory.newConnection();
 		
 		channel = connection.createChannel();
-		channel.exchangeDeclare(exchange, "fanout");
+//		channel.exchangeDeclare(exchange, "fanout");
+		channel.exchangeDeclarePassive(exchange);
 	}
 	
 	

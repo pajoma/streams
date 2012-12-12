@@ -3,6 +3,7 @@ package de.ifgi.streams.listener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import com.rabbitmq.client.AMQP.Queue.UnbindOk;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -80,11 +81,11 @@ public class StreamListener<T> implements Runnable  {
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		} finally {
-			try {
-				connection.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
+//			try {
+//				connection.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} 
 		}
 		
 	
@@ -118,6 +119,7 @@ public class StreamListener<T> implements Runnable  {
 	public void shutdown(){
 		try {
 			run = false;
+			channel.queueUnbind(queueName, exchange, "");
 			channel.close();
 			connection.close();
 		} catch (IOException e) {
